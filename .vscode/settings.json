@@ -1,7 +1,12 @@
 {
     "cSpell.words": [
+        "electrix",
         "ionide",
         "MSVC",
-        "rustc"
+        "reqwest",
+        "rustc",
+        "RUSTSEC",
+        "serde",
+        "serialnumber"
     ]
 }
