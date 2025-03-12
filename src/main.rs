@@ -26,7 +26,7 @@ async fn main() {
     println!("Found {} devices", devices.len());
     let device_info = devices
         .iter()
-        .map(data::data_structs::Device::pretty_print)
+        .map(Device::pretty_print)
         .fold(String::new(), |acc, e| acc + &e);
     print!("{device_info}");
 }

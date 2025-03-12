@@ -27,8 +27,7 @@ pub mod http_utils {
 
     pub async fn get_devices(host: Host) -> Result<Vec<Device>, String> {
         const DEVICE_ENDPOINT: &str = "/api/v2/meters/";
-        // let url = host.get_host_url().to_string() + DEVICE_ENDPOINT;
-        let result_future: JoinHandle<Result<Response, reqwestError>> = spawn(
+        let query_future: JoinHandle<Result<Response, reqwestError>> = spawn(
             make_query(
                 host.get_host_url() + DEVICE_ENDPOINT,
                 host.get_headers(),
@@ -36,15 +35,13 @@ pub mod http_utils {
             )
         );
 
-        let result_join: Result<Result<Response, reqwestError>, _> = result_future.await;
-        match result_join {
-            Ok(result) => {
-                match result {
-                    Ok(response) => get_devices_from_response(response).await,
-                    Err(err) => Err(err.to_string()),
-                }
-            },
-            Err(err) => Err(err.to_string())
+        let query_response: Result<Response, reqwestError> = query_future
+            .await
+            .map_err(|err| err.to_string())?;
+
+        match query_response {
+            Ok(response) => get_devices_from_response(response).await,
+            Err(err) => Err(err.to_string()),
         }
     }
 
