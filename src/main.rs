@@ -2,8 +2,8 @@ mod data;
 mod utils;
 
 use std::env;
-use crate::data::data_structs::{Device, DeviceData, Host};
-use crate::utils::http_utils::{get_devices, get_device_data};
+use crate::data::data_structs::{Device, DeviceData, DeviceEvent, Host};
+use crate::utils::http_utils::{get_devices, get_device_data, get_device_events, get_event_data};
 
 
 #[tokio::main]
@@ -47,6 +47,30 @@ async fn main() {
         if let Some(data) = device_data.first() {
             println!("First data point:");
             println!("{}", data.pretty_print());
+        }
+
+        let device_events: Vec<DeviceEvent> = match get_device_events(&host, &device, &date).await {
+            Ok(device_events) => device_events,
+            Err(error) => {
+                eprintln!("{error}");
+                std::process::exit(1);
+            }
+        };
+
+        println!("Found {} events for device {} on date {}", device_events.len(), device.id, date);
+        if let Some(event) = device_events.first() {
+            println!("First event:");
+            match get_event_data(&host, event.id).await {
+                Ok(event_data) => {
+                    println!("{}", event.pretty_print_with_details(&event_data));
+                },
+                Err(error) => {
+                    eprintln!("{error}");
+                    println!("{}", event.pretty_print());
+                },
+            };
+
+            // println!("{}", event.pretty_print_with_details(&event_data));
         }
     }
 }
