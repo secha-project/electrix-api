@@ -32,3 +32,10 @@ target/
 
 # Environmental variables
 .env
+.env.template
+
+# Docker
+.dockerignore
+Dockerfile-check
+Dockerfile
+run_app.sh

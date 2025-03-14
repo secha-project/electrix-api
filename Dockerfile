@@ -1,0 +1,35 @@
+FROM ubuntu:24.10 AS builder
+
+WORKDIR /app
+ENV LANG=C.UTF-8
+
+# Install the latest stable version of Rust and cargo
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y curl gcc libssl-dev openssl pkg-config && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    apt-get clean
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Copy the code
+COPY . .
+
+# Compile the code
+RUN cargo build --release
+
+
+FROM ubuntu:24.10 AS runner
+
+WORKDIR /app
+ENV LANG=C.UTF-8
+
+# Setup the environment and copy the compiled binary
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+COPY --from=builder /app/target/release/electrix-api /app/electrix-api
+
+ENTRYPOINT [ "/app/electrix-api" ]
+CMD [ "2025-01-01" ]
