@@ -1,0 +1,35 @@
+use serde::Deserialize;
+
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct DeviceEventData {
+    pub timestamp: String,
+    pub d1: f32,
+    pub d2: f32,
+    pub d3: f32,
+    pub d4: f32,
+    pub d5: f32,
+    pub d6: f32,
+    pub d7: f32,
+    pub d8: f32,
+    pub d9: f32,
+    pub d10: f32,
+    pub d11: f32,
+    pub d12: f32,
+    pub d13: f32,
+    pub d14: f32,
+    pub d15: f32,
+    pub d16: f32,
+    pub d17: f32,
+    pub d18: f32,
+    pub d19: f32,
+    pub d20: f32,
+    pub d21: f32,
+    pub d22: f32,
+    pub d23: f32,
+    pub d24: f32,
+    pub d25: f32,
+    pub d26: f32,
+    pub d27: f32,
+    pub d28: f32,
+}

@@ -2,7 +2,7 @@ mod data;
 mod utils;
 
 use std::env;
-use crate::data::data_structs::{Device, DeviceData, DeviceEvent, Host};
+use self::data::{device::Device, device_data::DeviceData, event::DeviceEvent, host::Host};
 use crate::utils::http_utils::{get_devices, get_device_data, get_device_events, get_event_data};
 
 
@@ -69,8 +69,6 @@ async fn main() {
                     println!("{}", event.pretty_print());
                 },
             };
-
-            // println!("{}", event.pretty_print_with_details(&event_data));
         }
     }
 }
