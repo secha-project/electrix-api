@@ -31,6 +31,7 @@ impl DeviceEvent {
         &format!("- end time: {endtime}\n")
     }
 
+    #[allow(clippy::similar_names, clippy::too_many_lines)]
     pub fn pretty_print_with_details(&self, details: &DeviceEventItem) -> String {
         let id: u32 = self.id;
         let meter: u32 = self.meter;

@@ -1,6 +1,6 @@
 #[derive(Clone, Debug)]
 pub struct Host {
-    host_url: String,
+    url: String,
     token_header: String,
     allow_invalid_certs: bool,
 }
@@ -13,7 +13,7 @@ impl Host {
         const ALLOW_INVALID_CERTIFICATES: &str = "ALLOW_INVALID_CERTIFICATES";
         const ERROR_MESSAGE: &str = "environment variable is not set";
 
-        let host_url: String = std::env::var(HOST_URL_STR)
+        let url: String = std::env::var(HOST_URL_STR)
             .map_or_else(
                 |_| Err(format!("{HOST_URL_STR} {ERROR_MESSAGE}")),
                 Ok
@@ -34,15 +34,15 @@ impl Host {
 
         Ok(
             Self {
-                host_url,
+                url,
                 token_header,
                 allow_invalid_certs,
             }
         )
     }
 
-    pub fn get_host_url(&self) -> String {
-        self.host_url.clone()
+    pub fn get_url(&self) -> String {
+        self.url.clone()
     }
 
     pub fn get_headers(&self) -> Vec<(String, String)> {
@@ -52,7 +52,7 @@ impl Host {
         ]
     }
 
-    pub fn allow_invalid_certs(&self) -> bool {
+    pub const fn allow_invalid_certs(&self) -> bool {
         self.allow_invalid_certs
     }
 }

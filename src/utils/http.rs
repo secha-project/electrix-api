@@ -1,5 +1,5 @@
 use reqwest::{Client, Error as reqwestError, RequestBuilder, Response, Url};
-use serde::{de::DeserializeOwned, Deserialize};
+use serde::de::DeserializeOwned;
 use tokio::{spawn, task::JoinHandle};
 
 
@@ -14,6 +14,7 @@ async fn make_query(
 
     let query: RequestBuilder = Client::builder()
         .danger_accept_invalid_certs(allow_invalid_certs)
+        .timeout(std::time::Duration::from_secs(20))
         .build()?
         .get(url_with_params);
 
@@ -26,22 +27,21 @@ async fn make_query(
 
 async fn handle_response<T: DeserializeOwned>(response: Response) -> Result<T, String> {
     let status_code: u16 = response.status().as_u16();
+    let url: String = response.url().to_string();
+    let error_info: String = format!(" ({status_code}) ({url})");
+
     let response_body: String = response
         .text()
         .await
-        .map_err(|err| err.to_string() + &format!(" ({status_code})"))?;
+        .map_err(|err| err.to_string() + &error_info)?;
 
     if status_code != 200 {
-        return Err(format!("({status_code}) {}", response_body.clone()));
+        return Err(response_body + &error_info);
     }
 
-    deserialize_response_body(&response_body, status_code)
-}
-
-fn deserialize_response_body<'a, T: Deserialize<'a>>(response_body: &'a str, status_code: u16) -> Result<T, String> {
     match serde_json::from_str(&response_body) {
         Ok(event) => Ok(event),
-        Err(err) => Err(err.to_string() + &format!(" ({status_code})")),
+        Err(err) => Err(err.to_string() + &error_info),
     }
 }
 

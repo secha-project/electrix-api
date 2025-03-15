@@ -14,7 +14,7 @@ pub async fn get_devices(host: &Host) -> Result<Vec<Device>, String> {
     const DEVICE_ENDPOINT: &str = "/api/v2/meters/";
 
     get_data(
-        host.get_host_url() + DEVICE_ENDPOINT,
+        host.get_url() + DEVICE_ENDPOINT,
         host.get_headers(),
         vec![],
         host.allow_invalid_certs()
@@ -25,7 +25,7 @@ pub async fn get_device_data(host: &Host, device: &Device, date: &str) -> Result
     const DATA_ENDPOINT: &str = "/api/v2/measurements/";
 
     get_data(
-    host.get_host_url() + DATA_ENDPOINT,
+    host.get_url() + DATA_ENDPOINT,
         host.get_headers(),
         vec![
             ("meter".to_string(), device.id.to_string()),
@@ -41,7 +41,7 @@ pub async fn get_device_events(host: &Host, device: &Device, date: &str) -> Resu
     const EVENT_ENDPOINT: &str = "/api/v2/events/";
 
     get_data(
-        host.get_host_url() + EVENT_ENDPOINT,
+        host.get_url() + EVENT_ENDPOINT,
         host.get_headers(),
         vec![
             ("meter".to_string(), device.id.to_string()),
@@ -56,7 +56,7 @@ pub async fn get_event_data(host: &Host, event_id: u32) -> Result<DeviceEventIte
     let event_details_endpoint: String = format!("/api/v2/events/{event_id}/");
 
     get_data(
-        host.get_host_url() + event_details_endpoint.as_str(),
+        host.get_url() + event_details_endpoint.as_str(),
         host.get_headers(),
         vec![],
         host.allow_invalid_certs()

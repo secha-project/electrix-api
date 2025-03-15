@@ -1,4 +1,3 @@
-#[allow(non_snake_case, clippy::similar_names, clippy::too_many_lines)]
 use serde::Deserialize;
 
 
@@ -268,6 +267,7 @@ pub struct DeviceData {
 
 
 impl DeviceData {
+    #[allow(clippy::similar_names, clippy::too_many_lines)]
     pub fn pretty_print(&self) -> String {
         let id: u32 = self.id;
         let meter: u32 = self.meter;
