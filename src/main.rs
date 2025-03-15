@@ -3,7 +3,7 @@ mod utils;
 
 use std::env;
 use self::data::{device::Device, device_data::DeviceData, event::DeviceEvent, host::Host};
-use crate::utils::http_utils::{get_devices, get_device_data, get_device_events, get_event_data};
+use crate::utils::fetchers::{get_devices, get_device_data, get_device_events, get_event_data};
 
 
 #[tokio::main]
