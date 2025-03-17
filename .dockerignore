@@ -38,4 +38,9 @@ target/
 .dockerignore
 Dockerfile-check
 Dockerfile
+
+# run script
 run_app.sh
+
+# data folder
+data

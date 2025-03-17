@@ -1,3 +1,5 @@
+use crate::utils::environ::{get_env, get_env_or_default};
+
 #[derive(Clone, Debug)]
 pub struct Host {
     url: String,
@@ -11,31 +13,15 @@ impl Host {
         const HOST_URL_STR: &str = "HOST_URL";
         const ACCESS_TOKEN_STR: &str = "ACCESS_TOKEN";
         const ALLOW_INVALID_CERTIFICATES: &str = "ALLOW_INVALID_CERTIFICATES";
-        const ERROR_MESSAGE: &str = "environment variable is not set";
 
-        let url: String = std::env::var(HOST_URL_STR)
-            .map_or_else(
-                |_| Err(format!("{HOST_URL_STR} {ERROR_MESSAGE}")),
-                Ok
-                // |url| Ok(url)
-            )?;
-
-        let token_header: String = std::env::var(ACCESS_TOKEN_STR)
-            .map_or_else(
-                |_| Err(format!("{ACCESS_TOKEN_STR} {ERROR_MESSAGE}")),
-                |token| Ok(format!("Api-Key {token}"))
-            )?;
-
-        let allow_invalid_certs: bool = std::env::var(ALLOW_INVALID_CERTIFICATES)
-            .map_or_else(
-                |_| false,
-                |value| value == "true"
-            );
+        let url: String = get_env(HOST_URL_STR)?;
+        let token: String = get_env::<String>(ACCESS_TOKEN_STR)?;
+        let allow_invalid_certs: bool = get_env_or_default(ALLOW_INVALID_CERTIFICATES, &false);
 
         Ok(
             Self {
                 url,
-                token_header,
+                token_header: format!("Api-Key {token}"),
                 allow_invalid_certs,
             }
         )

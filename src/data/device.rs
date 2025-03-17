@@ -7,8 +7,8 @@ pub struct Device {
     pub location: String,
     pub serialnumber: String,
     pub reading: i32,
-    pub ik: i32,  // the current factor
-    pub uk: i32,  // the voltage factor
+    pub ik: f32,  // the current factor
+    pub uk: f32,  // the voltage factor
 }
 
 
@@ -18,8 +18,8 @@ impl Device {
         let serial_number: String = self.serialnumber.clone();
         let location: String = self.location.clone();
         let reading: i32 = self.reading;
-        let current_factor: i32 = self.ik;
-        let voltage_factor: i32 = self.uk;
+        let current_factor: f32 = self.ik;
+        let voltage_factor: f32 = self.uk;
 
         "Device:\n".to_string() +
         &format!("- id: {id}\n") +
@@ -28,5 +28,27 @@ impl Device {
         &format!("- reading: {reading}\n") +
         &format!("- current factor: {current_factor}\n") +
         &format!("- voltage factor: {voltage_factor}\n")
+    }
+
+    pub fn to_header_record() -> Vec<String> {
+        vec![
+            "id".to_string(),
+            "serial number".to_string(),
+            "location".to_string(),
+            "reading".to_string(),
+            "current factor".to_string(),
+            "voltage factor".to_string()
+        ]
+    }
+
+    pub fn to_record(&self) -> Vec<String> {
+        vec![
+            self.id.to_string(),
+            self.serialnumber.clone(),
+            self.location.clone(),
+            self.reading.to_string(),
+            self.ik.to_string(),
+            self.uk.to_string()
+        ]
     }
 }

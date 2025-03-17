@@ -176,4 +176,24 @@ impl DeviceEvent {
 
         result + "- no data points\n"
     }
+
+    pub fn to_header_record() -> Vec<String> {
+        vec![
+            "id".to_string(),
+            "meter".to_string(),
+            "triggertime".to_string(),
+            "starttime".to_string(),
+            "endtime".to_string(),
+        ]
+    }
+
+    pub fn to_record(&self) -> Vec<String> {
+        vec![
+            self.id.to_string(),
+            self.meter.to_string(),
+            self.triggertime.clone().map_or_else(String::new, |time| time),
+            self.starttime.clone(),
+            self.endtime.clone(),
+        ]
+    }
 }
