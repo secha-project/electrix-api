@@ -13,11 +13,6 @@ target/
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/
@@ -44,3 +39,4 @@ run_app.sh
 
 # data folder
 data
+!data/.gitignore

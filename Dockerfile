@@ -20,7 +20,6 @@ RUN cargo build --release
 
 FROM ubuntu:24.10 AS runner
 
-WORKDIR /app
 ENV LANG=C.UTF-8
 
 # Setup the environment and copy the compiled binary
@@ -28,7 +27,13 @@ RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y ca-certificates && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd -g 1234 electrix && \
+    useradd -m -u 1234 -g electrix electrix && \
+    mkdir -p /app/data && \
+    chown electrix:electrix /app/data
+USER electrix
+WORKDIR /app
 COPY --from=builder /app/target/release/electrix-api /app/electrix-api
 
 ENTRYPOINT [ "/app/electrix-api" ]

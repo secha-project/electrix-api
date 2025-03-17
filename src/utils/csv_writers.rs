@@ -11,7 +11,7 @@ fn write_records(filename: &str, records: Vec<Vec<String>>) {
     let mut writer = match csv::Writer::from_path(filename) {
         Ok(writer) => writer,
         Err(err) => {
-            eprintln!("Cannot create file: {err}");
+            eprintln!("Cannot create file ({filename}): {err}");
             return;
         }
     };
