@@ -90,7 +90,7 @@ async fn main() {
         device_event_collection.extend(device_events.clone());
 
         println!("Found {} events for device {} on date {}", device_events.len(), device.id, date);
-        let mut event_printed: bool = verbose;
+        let mut event_printed: bool = !verbose;
         for event in device_events {
             match get_event_data(&host, event.id).await {
                 Ok(event_item) => {
@@ -100,14 +100,14 @@ async fn main() {
                     };
                     event_data_collection.push(event_item_clone);
 
-                    if verbose && !event_printed {
+                    if !event_printed {
                         println!("{}", event.pretty_print_with_details(&event_item));
                         event_printed = true;
                     }
                 },
                 Err(error) => {
                     eprintln!("{error}");
-                    if verbose && !event_printed {
+                    if !event_printed {
                         println!("{}", event.pretty_print());
                         event_printed = true;
                     }
