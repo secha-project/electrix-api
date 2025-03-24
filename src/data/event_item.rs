@@ -19,8 +19,8 @@ pub struct DeviceEventItemWithId {
 
 
 impl DeviceEventItemWithId {
-    pub fn from_event(event_id: u32, event_item: DeviceEventItem) -> DeviceEventItemWithId {
-        DeviceEventItemWithId {
+    pub fn from_event(event_id: u32, event_item: DeviceEventItem) -> Self {
+        Self {
             id: event_id,
             settings: event_item.settings,
             data: event_item.data,

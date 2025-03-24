@@ -650,7 +650,7 @@ impl DeviceData {
             self.io.clone(),
             self.flagged.clone(),
             self.periods.to_string(),
-            self.samples.clone().map_or_else(String::new, |s| s.to_string()),
+            self.samples.clone().map_or_else(String::new, |s| s),
             self.calc_t.to_string(),
             self.m0peak_t.to_string(),
             self.crc_status.clone(),
