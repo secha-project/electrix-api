@@ -3,7 +3,7 @@ use crate::{
         device::Device,
         device_data::{DeviceData, DATA_POINTS},
         event::DeviceEvent,
-        event_item::DeviceEventItem,
+        event_item::{DeviceEventItem, DeviceEventItemWithId},
         host::Host
     },
     utils::http::get_data
@@ -52,13 +52,15 @@ pub async fn get_device_events(host: &Host, device: &Device, date: &str) -> Resu
     ).await
 }
 
-pub async fn get_event_data(host: &Host, event_id: u32) -> Result<DeviceEventItem, String> {
+pub async fn get_event_data(host: &Host, event_id: u32) -> Result<DeviceEventItemWithId, String> {
     let event_details_endpoint: String = format!("/api/v2/events/{event_id}/");
 
-    get_data(
+    get_data::<DeviceEventItem>(
         host.get_url() + event_details_endpoint.as_str(),
         host.get_headers(),
         vec![],
         host.allow_invalid_certs()
-    ).await
+    )
+        .await
+        .map(|event_item| DeviceEventItemWithId::from_event(event_id, event_item))
 }

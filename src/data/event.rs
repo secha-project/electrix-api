@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use super::event_item::DeviceEventItem;
+use super::event_item::DeviceEventItemWithId;
 
 
 #[derive(Clone, Debug, Deserialize)]
@@ -24,7 +24,7 @@ impl DeviceEvent {
         let endtime: String = self.endtime.clone();
 
         "Device Event:\n".to_string() +
-        &format!("- id: {id}\n") +
+        &format!("- event id: {id}\n") +
         &format!("- meter: {meter}\n") +
         &format!("- trigger time: {triggertime}\n") +
         &format!("- start time: {starttime}\n") +
@@ -32,7 +32,7 @@ impl DeviceEvent {
     }
 
     #[allow(clippy::similar_names, clippy::too_many_lines)]
-    pub fn pretty_print_with_details(&self, details: &DeviceEventItem) -> String {
+    pub fn pretty_print_with_details(&self, details: &DeviceEventItemWithId) -> String {
         let id: u32 = self.id;
         let meter: u32 = self.meter;
         let triggertime: String = self.triggertime.as_ref().map_or_else(|| "null".to_string(), std::clone::Clone::clone);
@@ -86,7 +86,7 @@ impl DeviceEvent {
         let settings_d28: String = details.settings.d28.clone();
 
         let result: String = "Device Event:\n".to_string() +
-        &format!("- id: {id}\n") +
+        &format!("- event id: {id}\n") +
         &format!("- meter: {meter}\n") +
         &format!("- trigger time: {triggertime}\n") +
         &format!("- start time: {starttime}\n") +
@@ -179,7 +179,7 @@ impl DeviceEvent {
 
     pub fn to_header_record() -> Vec<String> {
         vec![
-            "id".to_string(),
+            "event_id".to_string(),
             "meter".to_string(),
             "triggertime".to_string(),
             "starttime".to_string(),

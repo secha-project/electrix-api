@@ -10,13 +10,28 @@ pub struct DeviceEventItem {
     pub data: Vec<DeviceEventData>,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+pub struct DeviceEventItemWithId {
+    pub id: u32,
+    pub settings: DeviceEventSettings,
+    pub data: Vec<DeviceEventData>,
+}
 
-impl DeviceEventItem {
 
-    fn values_to_maps(&self) -> Vec<HashMap<String, String>> {
+impl DeviceEventItemWithId {
+    pub fn from_event(event_id: u32, event_item: DeviceEventItem) -> DeviceEventItemWithId {
+        DeviceEventItemWithId {
+            id: event_id,
+            settings: event_item.settings,
+            data: event_item.data,
+        }
+    }
+
+    fn values_to_maps(&self, event_id: u32) -> Vec<HashMap<String, String>> {
         self.data
             .iter()
             .map(|data| HashMap::from([
+                ("event_id".to_string(), event_id.to_string()),
                 ("timestamp".to_string(), data.timestamp.clone()),
                 (self.settings.d1.clone(), data.d1.to_string()),
                 (self.settings.d2.clone(), data.d2.to_string()),
@@ -53,6 +68,7 @@ impl DeviceEventItem {
     pub fn to_header_record(measurement_types: &[String]) -> Vec<String> {
         [
             "meter".to_string(),
+            "event_id".to_string(),
             "timestamp".to_string(),
         ]
             .iter()
@@ -61,12 +77,13 @@ impl DeviceEventItem {
             .collect()
     }
 
-    pub fn to_data_records(&self, measurement_types: &[String]) -> Vec<Vec<String>> {
-        self.values_to_maps()
+    pub fn to_data_records(&self, event_id: u32, measurement_types: &[String]) -> Vec<Vec<String>> {
+        self.values_to_maps(event_id)
             .iter()
             .map(|data_map| {
                 [
                     self.settings.meter.to_string(),
+                    data_map.get("event_id").unwrap().to_string(),
                     data_map.get("timestamp").unwrap().to_string(),
                 ]
                     .iter()

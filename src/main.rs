@@ -4,11 +4,11 @@ mod utils;
 use std::collections::HashMap;
 use std::env;
 
+use data::event_item::DeviceEventItemWithId;
 use data::{
     device::Device,
     device_data::DeviceData,
     event::DeviceEvent,
-    event_item::DeviceEventItem,
     event_settings::DeviceEventSettings,
     host::Host
 };
@@ -55,7 +55,7 @@ async fn main() {
     let mut device_data_collection: Vec<DeviceData> = vec![];
     let mut device_event_collection: Vec<DeviceEvent> = vec![];
     let mut event_triggers: Vec<DeviceEventSettings> = vec![];
-    let mut event_data_collection: Vec<DeviceEventItem> = vec![];
+    let mut event_data_collection: Vec<DeviceEventItemWithId> = vec![];
 
     for device in devices {
         if verbose {
@@ -100,14 +100,14 @@ async fn main() {
                     };
                     event_data_collection.push(event_item_clone);
 
-                    if !event_printed {
+                    if verbose && !event_printed {
                         println!("{}", event.pretty_print_with_details(&event_item));
                         event_printed = true;
                     }
                 },
                 Err(error) => {
                     eprintln!("{error}");
-                    if !event_printed {
+                    if verbose && !event_printed {
                         println!("{}", event.pretty_print());
                         event_printed = true;
                     }

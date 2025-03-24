@@ -1,7 +1,7 @@
 use csv;
 use std::collections::HashMap;
 
-use crate::data::event_item::DeviceEventItem;
+use crate::data::event_item::DeviceEventItemWithId;
 use crate::data::{device::Device, device_data::DeviceData, event::DeviceEvent, event_settings::DeviceEventSettings};
 
 const DATA_FOLDER: &str = "data";
@@ -85,7 +85,7 @@ pub fn write_event_triggers(events: &[DeviceEventSettings], date: &str) {
     write_records(&filename, records);
 }
 
-pub fn write_event_data(events: &[DeviceEventItem], date: &str) {
+pub fn write_event_data(events: &[DeviceEventItemWithId], date: &str) {
     let filename: String = format!("{DATA_FOLDER}/{date}_event_data.csv");
 
     let mut measurement_types: Vec<String> = vec![];
@@ -97,12 +97,12 @@ pub fn write_event_data(events: &[DeviceEventItem], date: &str) {
         }
     }
 
-    let records: Vec<Vec<String>> = std::iter::once(&DeviceEventItem::to_header_record(&measurement_types))
+    let records: Vec<Vec<String>> = std::iter::once(&DeviceEventItemWithId::to_header_record(&measurement_types))
         .cloned()
         .chain(
             events
                 .iter()
-                .flat_map(|event| event.to_data_records(&measurement_types))
+                .flat_map(|event| event.to_data_records(event.id, &measurement_types))
         )
         .collect();
 
