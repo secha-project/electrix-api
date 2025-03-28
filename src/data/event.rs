@@ -191,9 +191,9 @@ impl DeviceEvent {
         vec![
             self.id.to_string(),
             self.meter.to_string(),
-            self.triggertime.clone().map_or_else(String::new, |time| time),
-            self.starttime.clone(),
-            self.endtime.clone(),
+            format!("{}Z", self.triggertime.clone().map_or_else(String::new, |time| time)),
+            format!("{}Z", self.starttime.clone()),
+            format!("{}Z", self.endtime.clone()),
         ]
     }
 }

@@ -107,7 +107,7 @@ impl DeviceEventSettings {
         vec![
             self.enabled.clone(),
             self.meter.to_string(),
-            self.timestamp.clone(),
+            format!("{}Z", self.timestamp.clone()),
             self.pre_en_t.clone(),
             self.post_en_t.clone(),
             self.pre_rec_t.clone(),

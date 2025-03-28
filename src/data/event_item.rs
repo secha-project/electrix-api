@@ -32,7 +32,7 @@ impl DeviceEventItemWithId {
             .iter()
             .map(|data| HashMap::from([
                 ("event_id".to_string(), event_id.to_string()),
-                ("timestamp".to_string(), data.timestamp.clone()),
+                ("timestamp".to_string(), format!("{}Z", data.timestamp.clone())),
                 (self.settings.d1.clone(), data.d1.to_string()),
                 (self.settings.d2.clone(), data.d2.to_string()),
                 (self.settings.d3.clone(), data.d3.to_string()),
@@ -84,7 +84,7 @@ impl DeviceEventItemWithId {
                 [
                     self.settings.meter.to_string(),
                     data_map.get("event_id").unwrap().to_string(),
-                    data_map.get("timestamp").unwrap().to_string(),
+                    format!("{}Z", data_map.get("timestamp").unwrap().to_string()),
                 ]
                     .iter()
                     .cloned()

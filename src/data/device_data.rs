@@ -430,7 +430,7 @@ impl DeviceData {
         vec![
             self.id.to_string(),
             self.meter.to_string(),
-            self.timestamp.clone(),
+            format!("{}Z", self.timestamp.clone()),
             self.fhz.to_string(),
             (self.pw * power_factor).to_string(),
             (self.qfryzevar * power_factor).to_string(),
