@@ -84,7 +84,7 @@ impl DeviceEventItemWithId {
                 [
                     self.settings.meter.to_string(),
                     data_map.get("event_id").unwrap().to_string(),
-                    format!("{}Z", data_map.get("timestamp").unwrap().to_string()),
+                    format!("{}Z", data_map.get("timestamp").unwrap()),
                 ]
                     .iter()
                     .cloned()
