@@ -85,7 +85,7 @@ pub fn write_event_triggers(events: &[DeviceEventSettings], date: &str) {
     write_records(&filename, records);
 }
 
-pub fn write_event_data(events: &[DeviceEventItemWithId], date: &str) {
+pub fn write_event_data(devices: &HashMap<u32, Device>, events: &[DeviceEventItemWithId], date: &str) {
     let filename: String = format!("{DATA_FOLDER}/{date}_event_data.csv");
 
     let mut measurement_types: Vec<String> = vec![];
@@ -102,7 +102,17 @@ pub fn write_event_data(events: &[DeviceEventItemWithId], date: &str) {
         .chain(
             events
                 .iter()
-                .flat_map(|event| event.to_data_records(event.id, &measurement_types))
+                .flat_map(|event| {
+                    let device: &Device = if let Some(device) = devices.get(&event.settings.meter) {
+                        device
+                    }
+                    else {
+                        eprintln!("Device {} not found", event.settings.meter);
+                        return vec![];
+                    };
+
+                    event.to_data_records(event.id, &measurement_types, device.ik, device.uk)
+        })
         )
         .collect();
 

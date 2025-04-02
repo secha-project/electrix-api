@@ -119,5 +119,5 @@ async fn main() {
     write_device_data(&device_map, &device_data_collection, &date);
     write_device_events(&device_event_collection, &date);
     write_event_triggers(&event_triggers, &date);
-    write_event_data(&event_data_collection.clone(), &date);
+    write_event_data(&device_map, &event_data_collection.clone(), &date);
 }
