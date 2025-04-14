@@ -97,7 +97,7 @@ async fn main() {
                     let event_item_clone = event_item.clone();
                     if !event_triggers.contains(&event_item_clone.settings) {
                         event_triggers.push(event_item_clone.clone().settings);
-                    };
+                    }
                     event_data_collection.push(event_item_clone);
 
                     if !event_printed {
@@ -112,7 +112,7 @@ async fn main() {
                         event_printed = true;
                     }
                 },
-            };
+            }
         }
     }
 
