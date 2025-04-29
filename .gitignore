@@ -32,3 +32,6 @@ target/
 
 # Environmental variables
 .env
+
+# Ignore test file
+run_batch.sh
