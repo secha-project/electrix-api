@@ -10,6 +10,9 @@ function run_tests {
     echo "Checking the code with cargo check"
     cargo check --release
 
+    echo "Running tests with cargo test"
+    cargo test --release
+
     # Run static analysis with cargo clippy
     # =====================================
     echo "Running static analysis with cargo clippy"

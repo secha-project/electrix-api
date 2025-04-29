@@ -45,6 +45,7 @@
         "rustix",
         "rustls",
         "RUSTSEC",
+        "rustup",
         "rustversion",
         "schannel",
         "scopeguard",
