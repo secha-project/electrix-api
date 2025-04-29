@@ -31,7 +31,7 @@ impl DeviceEventItemWithId {
         match measurement_type {
             "UL1" | "UL2" | "UL3" | "U12" | "U23" | "U31" | "TDUL1" | "TDUL2" | "TDUL3" => voltage_factor,
             "IL1" | "IL2" | "IL3" | "IN" | "TDIL1" | "TDIL2" | "TDIL3" => current_factor,
-            "P1L1" | "P1L2" | "P1L3" | "Q1L1" | "Q1L2" | "Q1L3" | "DPFL1" | "DPFL2" | "DPFL3" => voltage_factor * current_factor,
+            "P1L1" | "P1L2" | "P1L3" | "Q1L1" | "Q1L2" | "Q1L3" => voltage_factor * current_factor,
             _ => 1.0,
         }
     }
