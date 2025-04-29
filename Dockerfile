@@ -1,4 +1,4 @@
-FROM ubuntu:24.10 AS builder
+FROM ubuntu:25.04@sha256:79efa276fdefa2ee3911db29b0608f8c0561c347ec3f4d4139980d43b168d991 AS builder
 
 WORKDIR /app
 ENV LANG=C.UTF-8
@@ -18,7 +18,7 @@ COPY . .
 RUN cargo build --release
 
 
-FROM ubuntu:24.10 AS runner
+FROM ubuntu:25.04@sha256:79efa276fdefa2ee3911db29b0608f8c0561c347ec3f4d4139980d43b168d991 AS runner
 
 ENV LANG=C.UTF-8
 
