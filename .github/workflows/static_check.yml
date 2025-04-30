@@ -2,9 +2,6 @@ name: MX Electrix API Static Check
 
 on:
     push:
-        branches: [ $default-branch, $protected-branches ]
-    pull_request:
-        branches: [ $default-branch ]
     workflow_dispatch:
 
 jobs:
