@@ -70,4 +70,4 @@ To run the application in a Docker container, run the following command:
 
 where `<DATE>` is the date to fetch data for in the format `YYYY-MM-DD`.
 
-The application will write the data to the `data` directory. Note, that the user and group of the written files will likely not match the host user and group.
+The application will write the data to the `data` directory.
