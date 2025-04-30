@@ -22,17 +22,23 @@ FROM ubuntu:25.04@sha256:79efa276fdefa2ee3911db29b0608f8c0561c347ec3f4d4139980d4
 
 ENV LANG=C.UTF-8
 
+ARG USER_NAME=electrix
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
+
 # Setup the environment and copy the compiled binary
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    groupadd -g 1234 electrix && \
-    useradd -m -u 1234 -g electrix electrix && \
+    if ! getent passwd ${USER_UID} > /dev/null; then \
+        groupadd --gid ${USER_GID} ${USER_NAME} && \
+        useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USER_NAME}; \
+    fi && \
     mkdir -p /app/data && \
-    chown electrix:electrix /app/data
-USER electrix
+    chown ${USER_UID}:${USER_GID} /app/data
+USER ${USER_UID}
 WORKDIR /app
 COPY --from=builder /app/target/release/electrix-api /app/electrix-api
 

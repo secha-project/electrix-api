@@ -12,6 +12,7 @@
         "dpfmin",
         "electrix",
         "fastrand",
+        "getent",
         "getrandom",
         "gimli",
         "gnullvm",
