@@ -29,8 +29,8 @@ pub async fn get_device_data(host: &Host, device: &Device, date: &str) -> Result
         host.get_headers(),
         vec![
             ("meter".to_string(), device.id.to_string()),
-            ("start".to_string(), date.to_owned() + " 00:00:00"),
-            ("end".to_string(), date.to_owned() + " 23:59:59"),
+            ("start".to_string(), date.to_owned() + "T00:00:00"),
+            ("end".to_string(), date.to_owned() + "T23:59:59"),
             ("fields".to_string(), DATA_POINTS.to_string()),
         ],
         host.allow_invalid_certs()
@@ -45,8 +45,8 @@ pub async fn get_device_events(host: &Host, device: &Device, date: &str) -> Resu
         host.get_headers(),
         vec![
             ("meter".to_string(), device.id.to_string()),
-            ("start".to_string(), date.to_owned() + " 00:00:00.000000"),
-            ("end".to_string(), date.to_owned() + " 23:59:59.999999"),
+            ("start".to_string(), date.to_owned() + "T00:00:00"),
+            ("end".to_string(), date.to_owned() + "T23:59:59"),
         ],
         host.allow_invalid_certs()
     ).await
