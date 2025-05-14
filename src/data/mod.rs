@@ -7,3 +7,4 @@ pub mod event;
 pub mod event_settings;
 pub mod event_data;
 pub mod event_item;
+pub mod voltage_anomaly;

@@ -4,7 +4,8 @@ use crate::{
         device_data::{DeviceData, DATA_POINTS},
         event::DeviceEvent,
         event_item::{DeviceEventItem, DeviceEventItemWithId},
-        host::Host
+        host::Host,
+        voltage_anomaly::VoltageAnomaly,
     },
     utils::http::get_data
 };
@@ -63,4 +64,19 @@ pub async fn get_event_data(host: &Host, event_id: u32) -> Result<DeviceEventIte
     )
         .await
         .map(|event_item| DeviceEventItemWithId::from_event(event_id, event_item))
+}
+
+pub async fn get_anomaly_data(host: &Host, device: &Device, date: &str) -> Result<Vec<VoltageAnomaly>, String> {
+    const ANOMALY_ENDPOINT: &str = "/api/v2/ssstamps/";
+
+    get_data(
+        host.get_url() + ANOMALY_ENDPOINT,
+        host.get_headers(),
+        vec![
+            ("meter".to_string(), device.id.to_string()),
+            ("start".to_string(), date.to_owned() + "T00:00:00"),
+            ("end".to_string(), date.to_owned() + "T23:59:59"),
+        ],
+        host.allow_invalid_certs()
+    ).await
 }

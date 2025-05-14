@@ -2,7 +2,13 @@ use csv;
 use std::collections::HashMap;
 
 use crate::data::event_item::DeviceEventItemWithId;
-use crate::data::{device::Device, device_data::DeviceData, event::DeviceEvent, event_settings::DeviceEventSettings};
+use crate::data::{
+    device::Device,
+    device_data::DeviceData,
+    event::DeviceEvent,
+    event_settings::DeviceEventSettings,
+    voltage_anomaly::VoltageAnomaly
+};
 
 const DATA_FOLDER: &str = "data";
 
@@ -113,6 +119,29 @@ pub fn write_event_data(devices: &HashMap<u32, Device>, events: &[DeviceEventIte
 
                     event.to_data_records(event.id, &measurement_types, device.ik, device.uk)
         })
+        )
+        .collect();
+
+    write_records(&filename, records);
+}
+
+pub fn write_anomaly_data(devices: &HashMap<u32, Device>, anomalies: &[VoltageAnomaly], date: &str) {
+    let filename: String = format!("{DATA_FOLDER}/{date}_anomaly_data.csv");
+
+    let records: Vec<Vec<String>> = std::iter::once(VoltageAnomaly::to_header_record())
+        .chain(
+            anomalies
+                .iter()
+                .map(|anomaly| {
+                    let device: &Device = if let Some(device) = devices.get(&anomaly.meter) {
+                        device
+                    }
+                    else {
+                        eprintln!("Device {} not found", anomaly.meter);
+                        return vec![];
+                    };
+                    anomaly.to_record(device.ik)
+                })
         )
         .collect();
 
