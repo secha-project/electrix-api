@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use crate::utils::tools::to_string;
 
 
 #[derive(Clone, Debug, Deserialize)]
@@ -6,7 +7,7 @@ pub struct Device {
     pub id: u32,
     pub location: String,
     pub serialnumber: String,
-    pub reading: i32,
+    pub reading: Option<i32>,
     pub ik: f32,  // the current factor
     pub uk: f32,  // the voltage factor
 }
@@ -17,7 +18,7 @@ impl Device {
         let id: u32 = self.id;
         let serial_number: String = self.serialnumber.clone();
         let location: String = self.location.clone();
-        let reading: i32 = self.reading;
+        let reading: String = to_string(self.reading.as_ref());
         let current_factor: f32 = self.ik;
         let voltage_factor: f32 = self.uk;
 
@@ -46,7 +47,7 @@ impl Device {
             self.id.to_string(),
             self.serialnumber.clone(),
             self.location.clone(),
-            self.reading.to_string(),
+            to_string(self.reading.as_ref()),
             self.ik.to_string(),
             self.uk.to_string()
         ]
