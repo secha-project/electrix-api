@@ -4,17 +4,21 @@ mod utils;
 use std::collections::HashMap;
 use std::env;
 
-use data::event_item::DeviceEventItemWithId;
 use data::{
     device::Device,
     device_data::DeviceData,
     event::DeviceEvent,
+    event_item::DeviceEventItemWithId,
     event_settings::DeviceEventSettings,
-    host::Host
+    host::Host,
+    voltage_anomaly::VoltageAnomaly,
 };
-use utils::csv_writers::{write_device_data, write_device_events, write_devices, write_event_data, write_event_triggers};
-use utils::environ::get_env_or_default;
-use utils::fetchers::{get_devices, get_device_data, get_device_events, get_event_data};
+use utils::{
+    csv_writers::{write_anomaly_data, write_device_data, write_device_events, write_devices, write_event_data, write_event_triggers},
+    environ::get_env_or_default,
+    fetchers::get_event_data,
+    handlers::{get_anomaly_data, get_device_data, get_device_events, get_devices},
+};
 
 
 #[tokio::main]
@@ -28,22 +32,9 @@ async fn main() {
     let date: String = args[1].clone();
     let verbose: bool = get_env_or_default("VERBOSE", &false);
 
-    let host: Host = match Host::get_from_env() {
-        Ok(host) => host,
-        Err(error) => {
-            eprintln!("{error}");
-            std::process::exit(1);
-        }
-    };
+    let host: Host = utils::handlers::get_host();
 
-    let devices: Vec<Device> = match get_devices(&host).await {
-        Ok(devices) => devices,
-        Err(error) => {
-            eprintln!("{error}");
-            std::process::exit(1);
-        }
-    };
-
+    let devices: Vec<Device> = get_devices(&host).await;
     println!("Found {} devices", devices.len());
     write_devices(&devices, &date);
 
@@ -56,19 +47,13 @@ async fn main() {
     let mut device_event_collection: Vec<DeviceEvent> = vec![];
     let mut event_triggers: Vec<DeviceEventSettings> = vec![];
     let mut event_data_collection: Vec<DeviceEventItemWithId> = vec![];
+    let mut anomaly_collection: Vec<VoltageAnomaly> = vec![];
 
     for device in devices {
         if verbose {
-            println!("{}", device.pretty_print());
+            println!("\n{}", device.pretty_print());
         }
-        let device_data: Vec<DeviceData> = match get_device_data(&host, &device, &date).await {
-            Ok(device_data) => device_data,
-            Err(error) => {
-                eprintln!("{error}");
-                std::process::exit(1);
-            }
-        };
-
+        let device_data: Vec<DeviceData> = get_device_data(&host, &device, &date).await;
         device_data_collection.extend(device_data.clone());
 
         println!("Found {} data points for device {} on date {}", device_data.len(), device.id, date);
@@ -79,14 +64,7 @@ async fn main() {
             }
         }
 
-        let device_events: Vec<DeviceEvent> = match get_device_events(&host, &device, &date).await {
-            Ok(device_events) => device_events,
-            Err(error) => {
-                eprintln!("{error}");
-                std::process::exit(1);
-            }
-        };
-
+        let device_events: Vec<DeviceEvent> = get_device_events(&host, &device, &date).await;
         device_event_collection.extend(device_events.clone());
 
         println!("Found {} events for device {} on date {}", device_events.len(), device.id, date);
@@ -114,10 +92,23 @@ async fn main() {
                 },
             }
         }
+
+        let anomalies: Vec<VoltageAnomaly> = get_anomaly_data(&host, &device, &date).await;
+        anomaly_collection.extend(anomalies.clone());
+
+        println!("Found {} voltage swags/swells for device {} on date {}", anomalies.len(), device.id, date);
+        if verbose {
+            if let Some(anomaly) = anomalies.first() {
+                println!("First voltage swag/swell:");
+                println!("{}", anomaly.pretty_print());
+            }
+        }
+
     }
 
     write_device_data(&device_map, &device_data_collection, &date);
     write_device_events(&device_event_collection, &date);
     write_event_triggers(&event_triggers, &date);
     write_event_data(&device_map, &event_data_collection.clone(), &date);
+    write_anomaly_data(&device_map, &anomaly_collection, &date);
 }
