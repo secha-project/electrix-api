@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use super::event_item::DeviceEventItemWithId;
+use crate::utils::tools::to_string;
 
 
 #[derive(Clone, Debug, Deserialize)]
@@ -17,9 +18,7 @@ impl DeviceEvent {
     pub fn pretty_print(&self) -> String {
         let id: u32 = self.id;
         let meter: u32 = self.meter;
-        let triggertime: String = self.triggertime
-            .as_ref()
-            .map_or_else(|| "null".to_string(), std::clone::Clone::clone);
+        let triggertime: String = to_string(self.triggertime.as_ref());
         let starttime: String = self.starttime.clone();
         let endtime: String = self.endtime.clone();
 
@@ -35,7 +34,7 @@ impl DeviceEvent {
     pub fn pretty_print_with_details(&self, details: &DeviceEventItemWithId) -> String {
         let id: u32 = self.id;
         let meter: u32 = self.meter;
-        let triggertime: String = self.triggertime.as_ref().map_or_else(|| "null".to_string(), std::clone::Clone::clone);
+        let triggertime: String = to_string(self.triggertime.as_ref());
         let starttime: String = self.starttime.clone();
         let endtime: String = self.endtime.clone();
 
@@ -191,7 +190,7 @@ impl DeviceEvent {
         vec![
             self.id.to_string(),
             self.meter.to_string(),
-            format!("{}Z", self.triggertime.clone().map_or_else(String::new, |time| time)),
+            self.triggertime.clone().map_or_else(String::new, |time| time + "Z"),
             format!("{}Z", self.starttime.clone()),
             format!("{}Z", self.endtime.clone()),
         ]
