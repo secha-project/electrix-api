@@ -48,6 +48,13 @@ To run the static checks in a Docker container, run the following command:
 
 The application can be run either locally or in a Docker container.
 
+Before running the application, make sure to set the environment variables to the `.env` file:
+
+```bash
+cp .env.template .env
+# add/modify the correct values to .env
+```
+
 ### Running the application locally
 
 To run the application locally requires a Rust installation. To run the application locally, run the following command:
