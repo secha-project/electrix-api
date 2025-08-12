@@ -57,11 +57,9 @@ async fn main() {
         device_data_collection.extend(device_data.clone());
 
         println!("Found {} data points for device {} on date {}", device_data.len(), device.id, date);
-        if verbose {
-            if let Some(data) = device_data.first() {
-                println!("First data point:");
-                println!("{}", data.pretty_print());
-            }
+        if verbose && let Some(data) = device_data.first() {
+            println!("First data point:");
+            println!("{}", data.pretty_print());
         }
 
         let device_events: Vec<DeviceEvent> = get_device_events(&host, &device, &date).await;
@@ -97,11 +95,9 @@ async fn main() {
         anomaly_collection.extend(anomalies.clone());
 
         println!("Found {} voltage swags/swells for device {} on date {}", anomalies.len(), device.id, date);
-        if verbose {
-            if let Some(anomaly) = anomalies.first() {
-                println!("First voltage swag/swell:");
-                println!("{}", anomaly.pretty_print());
-            }
+        if verbose && let Some(anomaly) = anomalies.first() {
+            println!("First voltage swag/swell:");
+            println!("{}", anomaly.pretty_print());
         }
 
     }
