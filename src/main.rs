@@ -8,7 +8,7 @@ use data::{
     device::Device,
     device_data::DeviceData,
     event::DeviceEvent,
-    event_item::DeviceEventItemWithId,
+    event_item_with_id::EventItemWithId,
     event_settings::DeviceEventSettings,
     host::Host,
     voltage_anomaly::VoltageAnomaly,
@@ -46,7 +46,7 @@ async fn main() {
     let mut device_data_collection: Vec<DeviceData> = vec![];
     let mut device_event_collection: Vec<DeviceEvent> = vec![];
     let mut event_triggers: Vec<DeviceEventSettings> = vec![];
-    let mut event_data_collection: Vec<DeviceEventItemWithId> = vec![];
+    let mut event_data_collection: Vec<EventItemWithId> = vec![];
     let mut anomaly_collection: Vec<VoltageAnomaly> = vec![];
 
     for device in devices {
@@ -71,16 +71,29 @@ async fn main() {
             match get_event_data(&host, event.id).await {
                 Ok(event_item) => {
                     let event_item_clone = event_item.clone();
-                    if !event_triggers.contains(&event_item_clone.settings) {
-                        event_triggers.push(event_item_clone.clone().settings);
+                    match event_item {
+                        EventItemWithId::Mapped(mapped_item) => {
+                            if !event_triggers.contains(&mapped_item.settings) {
+                                event_triggers.push(mapped_item.clone().settings);
+                            }
+                            if !event_printed {
+                                println!("{}", event.pretty_print_mapped_with_details(&mapped_item));
+                                event_printed = true;
+                            }
+                        },
+                        EventItemWithId::Unmapped(unmapped_item) => {
+                            if !event_triggers.contains(&unmapped_item.settings) {
+                                event_triggers.push(unmapped_item.clone().settings);
+                            }
+                            if !event_printed {
+                                println!("{}", event.pretty_print_with_details(&unmapped_item));
+                                event_printed = true;
+                            }
+                        }
                     }
-                    event_data_collection.push(event_item_clone);
 
-                    if !event_printed {
-                        println!("{}", event.pretty_print_with_details(&event_item));
-                        event_printed = true;
-                    }
-                },
+                    event_data_collection.push(event_item_clone);
+                }
                 Err(error) => {
                     eprintln!("{error}");
                     if !event_printed {
@@ -105,6 +118,6 @@ async fn main() {
     write_device_data(&device_map, &device_data_collection, &date);
     write_device_events(&device_event_collection, &date);
     write_event_triggers(&event_triggers, &date);
-    write_event_data(&device_map, &event_data_collection.clone(), &date);
+    write_event_data(&device_map, &event_data_collection, &date);
     write_anomaly_data(&device_map, &anomaly_collection, &date);
 }

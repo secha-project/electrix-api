@@ -4,10 +4,12 @@ use crate::{
         device_data::{DeviceData, DATA_POINTS},
         event::DeviceEvent,
         event_item::{DeviceEventItem, DeviceEventItemWithId},
+        event_item_with_id::EventItemWithId,
+        event_mapped_item::{DeviceEventMappedItem, DeviceEventMappedItemWithId},
         host::Host,
         voltage_anomaly::VoltageAnomaly,
     },
-    utils::http::get_data
+    utils::{environ::get_env_or_default, http::get_data}
 };
 
 
@@ -53,17 +55,38 @@ pub async fn get_device_events(host: &Host, device: &Device, date: &str) -> Resu
     ).await
 }
 
-pub async fn get_event_data(host: &Host, event_id: u32) -> Result<DeviceEventItemWithId, String> {
+pub async fn get_event_data(host: &Host, event_id: u32) -> Result<EventItemWithId, String> {
+    const EVENT_DATA_MAPPING: &str = "EVENT_DATA_MAPPING";
     let event_details_endpoint: String = format!("/api/v2/events/{event_id}/");
+    let use_mapping: bool = get_env_or_default(EVENT_DATA_MAPPING, &false);
+    let params = vec![("map_variable_names".to_string(), use_mapping.to_string())];
 
-    get_data::<DeviceEventItem>(
-        host.get_url() + event_details_endpoint.as_str(),
-        host.get_headers(),
-        vec![],
-        host.allow_invalid_certs()
-    )
-        .await
-        .map(|event_item| DeviceEventItemWithId::from_event(event_id, event_item))
+    if use_mapping {
+        get_data::<DeviceEventMappedItem>(
+            host.get_url() + event_details_endpoint.as_str(),
+            host.get_headers(),
+            params,
+            host.allow_invalid_certs()
+        )
+            .await
+            .map(
+                |event_item|
+                EventItemWithId::Mapped(DeviceEventMappedItemWithId::from_event(event_id, event_item))
+            )
+    }
+    else {
+        get_data::<DeviceEventItem>(
+            host.get_url() + event_details_endpoint.as_str(),
+            host.get_headers(),
+            params,
+            host.allow_invalid_certs()
+        )
+            .await
+            .map(
+                |event_item|
+                EventItemWithId::Unmapped(DeviceEventItemWithId::from_event(event_id, event_item))
+            )
+    }
 }
 
 pub async fn get_anomaly_data(host: &Host, device: &Device, date: &str) -> Result<Vec<VoltageAnomaly>, String> {
