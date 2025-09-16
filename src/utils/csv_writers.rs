@@ -2,6 +2,8 @@ use csv;
 use std::collections::HashMap;
 
 use crate::data::event_item::DeviceEventItemWithId;
+use crate::data::event_item_with_id::EventItemWithId;
+use crate::data::event_mapped_item::DeviceEventMappedItemWithId;
 use crate::data::{
     device::Device,
     device_data::DeviceData,
@@ -91,34 +93,65 @@ pub fn write_event_triggers(events: &[DeviceEventSettings], date: &str) {
     write_records(&filename, records);
 }
 
-pub fn write_event_data(devices: &HashMap<u32, Device>, events: &[DeviceEventItemWithId], date: &str) {
+pub fn write_event_data(devices: &HashMap<u32, Device>, events: &Vec<EventItemWithId>, date: &str) {
     let filename: String = format!("{DATA_FOLDER}/{date}_event_data.csv");
 
     let mut measurement_types: Vec<String> = vec![];
     for event in events {
-        for measurement_type in event.settings.measurement_types() {
-            if !measurement_types.contains(&measurement_type) {
-                measurement_types.push(measurement_type);
+        match event {
+            EventItemWithId::Mapped(event) => {
+                for measurement_type in event.settings.measurement_types() {
+                    if !measurement_types.contains(&measurement_type) {
+                        measurement_types.push(measurement_type);
+                    }
+                }
+            },
+            EventItemWithId::Unmapped(event) => {
+                for measurement_type in event.settings.measurement_types() {
+                    if !measurement_types.contains(&measurement_type) {
+                        measurement_types.push(measurement_type);
+                    }
+                }
             }
         }
     }
 
-    let records: Vec<Vec<String>> = std::iter::once(&DeviceEventItemWithId::to_header_record(&measurement_types))
+    let header_record = match events.first() {
+        Some(EventItemWithId::Mapped(_)) => DeviceEventMappedItemWithId::to_header_record(),
+        _ => DeviceEventItemWithId::to_header_record(&measurement_types),
+    };
+
+    let records: Vec<Vec<String>> = std::iter::once(&header_record)
         .cloned()
         .chain(
             events
                 .iter()
                 .flat_map(|event| {
-                    let device: &Device = if let Some(device) = devices.get(&event.settings.meter) {
-                        device
-                    }
-                    else {
-                        eprintln!("Device {} not found", event.settings.meter);
-                        return vec![];
-                    };
+                    match event {
+                        EventItemWithId::Mapped(mapped_event) => {
+                            let device: &Device = if let Some(device) = devices.get(&mapped_event.settings.meter) {
+                                device
+                            }
+                            else {
+                                eprintln!("Device {} not found", mapped_event.settings.meter);
+                                return vec![];
+                            };
 
-                    event.to_data_records(event.id, &measurement_types, device.ik, device.uk)
-        })
+                            mapped_event.to_data_records(device.ik, device.uk)
+                        },
+                        EventItemWithId::Unmapped(unmapped_event) => {
+                            let device: &Device = if let Some(device) = devices.get(&unmapped_event.settings.meter) {
+                                device
+                            }
+                            else {
+                                eprintln!("Device {} not found", unmapped_event.settings.meter);
+                                return vec![];
+                            };
+
+                            unmapped_event.to_data_records(unmapped_event.id, &measurement_types, device.ik, device.uk)
+                        },
+                    }
+                })
         )
         .collect();
 

@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use super::event_item::DeviceEventItemWithId;
+use super::event_mapped_item::DeviceEventMappedItemWithId;
 use crate::utils::tools::to_string;
 
 
@@ -171,6 +172,124 @@ impl DeviceEvent {
             &format!("\t- {settings_d26}: {value_d26}\n") +
             &format!("\t- {settings_d27}: {value_d27}\n") +
             &format!("\t- {settings_d28}: {value_d28}\n")
+        }
+
+        result + "- no data points\n"
+    }
+
+    #[allow(clippy::similar_names, clippy::too_many_lines)]
+    pub fn pretty_print_mapped_with_details(&self, details: &DeviceEventMappedItemWithId) -> String {
+        let id: u32 = self.id;
+        let meter: u32 = self.meter;
+        let triggertime: String = to_string(self.triggertime.as_ref());
+        let starttime: String = self.starttime.clone();
+        let endtime: String = self.endtime.clone();
+
+        let settings_enabled: String = details.settings.enabled.clone();
+        let settings_meter: u32 = details.settings.meter;
+        let settings_timestamp: String = details.settings.timestamp.clone();
+        let settings_pre_en_t: String = details.settings.pre_en_t.clone();
+        let settings_post_en_t: String = details.settings.post_en_t.clone();
+        let settings_pre_rec_t: String = details.settings.pre_rec_t.clone();
+        let settings_post_rec_t: String = details.settings.post_rec_t.clone();
+        let settings_a: String = details.settings.A.clone();
+        let settings_b: String = details.settings.B.clone();
+        let settings_c: String = details.settings.C.clone();
+        let settings_d: String = details.settings.D.clone();
+        let settings_e: String = details.settings.E.clone();
+        let settings_f: String = details.settings.F.clone();
+        let settings_g: String = details.settings.G.clone();
+        let settings_h: String = details.settings.H.clone();
+        let settings_i: String = details.settings.I.clone();
+        let settings_logic: String = details.settings.logic.clone();
+
+        let result: String = "Device Event:\n".to_string() +
+        &format!("- event id: {id}\n") +
+        &format!("- meter: {meter}\n") +
+        &format!("- trigger time: {triggertime}\n") +
+        &format!("- start time: {starttime}\n") +
+        &format!("- end time: {endtime}\n") +
+        "- settings:\n" +
+        &format!("\t- enabled: {settings_enabled}\n") +
+        &format!("\t- meter: {settings_meter}\n") +
+        &format!("\t- timestamp: {settings_timestamp}\n") +
+        &format!("\t- pre_en_t: {settings_pre_en_t}\n") +
+        &format!("\t- post_en_t: {settings_post_en_t}\n") +
+        &format!("\t- pre_rec_t: {settings_pre_rec_t}\n") +
+        &format!("\t- post_rec_t: {settings_post_rec_t}\n") +
+        &format!("\t- A: {settings_a}\n") +
+        &format!("\t- B: {settings_b}\n") +
+        &format!("\t- C: {settings_c}\n") +
+        &format!("\t- D: {settings_d}\n") +
+        &format!("\t- E: {settings_e}\n") +
+        &format!("\t- F: {settings_f}\n") +
+        &format!("\t- G: {settings_g}\n") +
+        &format!("\t- H: {settings_h}\n") +
+        &format!("\t- I: {settings_i}\n") +
+        &format!("\t- logic: {settings_logic}\n");
+
+        if let Some(event) = details.data.first() {
+            let value_timestamp: String = event.timestamp.clone();
+            let value_d1: String = to_string(event.ul1.as_ref());
+            let value_d2: String = to_string(event.ul2.as_ref());
+            let value_d3: String = to_string(event.ul3.as_ref());
+            let value_d4: String = to_string(event.u12.as_ref());
+            let value_d5: String = to_string(event.u23.as_ref());
+            let value_d6: String = to_string(event.u31.as_ref());
+            let value_d7: String = to_string(event.il1.as_ref());
+            let value_d8: String = to_string(event.il2.as_ref());
+            let value_d9: String = to_string(event.il3.as_ref());
+            let value_d10: String = to_string(event.i_n.as_ref());
+            let value_d11: String = to_string(event.tdu_l1.as_ref());
+            let value_d12: String = to_string(event.tdu_l2.as_ref());
+            let value_d13: String = to_string(event.tdu_l3.as_ref());
+            let value_d14: String = to_string(event.tdi_l1.as_ref());
+            let value_d15: String = to_string(event.tdi_l2.as_ref());
+            let value_d16: String = to_string(event.tdi_l3.as_ref());
+            let value_d17: String = to_string(event.p1l1.as_ref());
+            let value_d18: String = to_string(event.p1l2.as_ref());
+            let value_d19: String = to_string(event.p1l3.as_ref());
+            let value_d20: String = to_string(event.q1l1.as_ref());
+            let value_d21: String = to_string(event.q1l2.as_ref());
+            let value_d22: String = to_string(event.q1l3.as_ref());
+            let value_d23: String = to_string(event.dpf_l1.as_ref());
+            let value_d24: String = to_string(event.dpf_l2.as_ref());
+            let value_d25: String = to_string(event.dpf_l3.as_ref());
+            let value_d26: String = to_string(event.freq.as_ref());
+            let value_d27: String = to_string(event.u2_to_u1_ratio.as_ref());
+            let value_d28: String = to_string(event.u0_to_u1_ratio.as_ref());
+
+            return result + &format!("- total of {} data points\n", details.data.len())
+            + "- first data point:\n" +
+            &format!("\t- timestamp: {value_timestamp}\n") +
+            &format!("\t- UL1: {value_d1}\n") +
+            &format!("\t- UL2: {value_d2}\n") +
+            &format!("\t- UL3: {value_d3}\n") +
+            &format!("\t- U12: {value_d4}\n") +
+            &format!("\t- U23: {value_d5}\n") +
+            &format!("\t- U31: {value_d6}\n") +
+            &format!("\t- IL1: {value_d7}\n") +
+            &format!("\t- IL2: {value_d8}\n") +
+            &format!("\t- IL3: {value_d9}\n") +
+            &format!("\t- IN: {value_d10}\n") +
+            &format!("\t- TDUL1: {value_d11}\n") +
+            &format!("\t- TDUL2: {value_d12}\n") +
+            &format!("\t- TDUL3: {value_d13}\n") +
+            &format!("\t- TDIL1: {value_d14}\n") +
+            &format!("\t- TDIL2: {value_d15}\n") +
+            &format!("\t- TDIL3: {value_d16}\n") +
+            &format!("\t- P1L1: {value_d17}\n") +
+            &format!("\t- P1L2: {value_d18}\n") +
+            &format!("\t- P1L3: {value_d19}\n") +
+            &format!("\t- Q1L1: {value_d20}\n") +
+            &format!("\t- Q1L2: {value_d21}\n") +
+            &format!("\t- Q1L3: {value_d22}\n") +
+            &format!("\t- DPFL1: {value_d23}\n") +
+            &format!("\t- DPFL2: {value_d24}\n") +
+            &format!("\t- DPFL3: {value_d25}\n") +
+            &format!("\t- freq: {value_d26}\n") +
+            &format!("\t- U2/U1: {value_d27}\n") +
+            &format!("\t- U0/U1: {value_d28}\n")
         }
 
         result + "- no data points\n"
