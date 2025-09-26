@@ -12,8 +12,6 @@ use crate::data::{
     voltage_anomaly::VoltageAnomaly
 };
 
-const DATA_FOLDER: &str = "data";
-
 
 fn write_records(filename: &str, records: Vec<Vec<String>>) {
     let mut writer = match csv::Writer::from_path(filename) {
@@ -40,8 +38,8 @@ fn write_records(filename: &str, records: Vec<Vec<String>>) {
     }
 }
 
-pub fn write_devices(devices: &[Device], date: &str) {
-    let filename: String = format!("{DATA_FOLDER}/{date}_devices.csv");
+pub fn write_devices(data_path: &str, devices: &[Device], date: &str) {
+    let filename: String = format!("{data_path}/{date}_devices.csv");
 
     let records: Vec<Vec<String>> = std::iter::once(Device::to_header_record())
         .chain(devices.iter().map(Device::to_record))
@@ -50,8 +48,8 @@ pub fn write_devices(devices: &[Device], date: &str) {
     write_records(&filename, records);
 }
 
-pub fn write_device_data(devices: &HashMap<u32, Device>, device_data: &[DeviceData], date: &str) {
-    let filename: String = format!("{DATA_FOLDER}/{date}_data.csv");
+pub fn write_device_data(data_path: &str, devices: &HashMap<u32, Device>, device_data: &[DeviceData], date: &str) {
+    let filename: String = format!("{data_path}/{date}_data.csv");
 
     let records: Vec<Vec<String>> = std::iter::once(DeviceData::to_header_record())
         .chain(
@@ -73,8 +71,8 @@ pub fn write_device_data(devices: &HashMap<u32, Device>, device_data: &[DeviceDa
     write_records(&filename, records);
 }
 
-pub fn write_device_events(events: &[DeviceEvent], date: &str) {
-    let filename: String = format!("{DATA_FOLDER}/{date}_events.csv");
+pub fn write_device_events(data_path: &str, events: &[DeviceEvent], date: &str) {
+    let filename: String = format!("{data_path}/{date}_events.csv");
 
     let records: Vec<Vec<String>> = std::iter::once(DeviceEvent::to_header_record())
         .chain(events.iter().map(DeviceEvent::to_record))
@@ -83,8 +81,8 @@ pub fn write_device_events(events: &[DeviceEvent], date: &str) {
     write_records(&filename, records);
 }
 
-pub fn write_event_triggers(events: &[DeviceEventSettings], date: &str) {
-    let filename: String = format!("{DATA_FOLDER}/{date}_event_triggers.csv");
+pub fn write_event_triggers(data_path: &str, events: &[DeviceEventSettings], date: &str) {
+    let filename: String = format!("{data_path}/{date}_event_triggers.csv");
 
     let records: Vec<Vec<String>> = std::iter::once(DeviceEventSettings::to_header_record())
         .chain(events.iter().map(DeviceEventSettings::to_record))
@@ -93,8 +91,8 @@ pub fn write_event_triggers(events: &[DeviceEventSettings], date: &str) {
     write_records(&filename, records);
 }
 
-pub fn write_event_data(devices: &HashMap<u32, Device>, events: &Vec<EventItemWithId>, date: &str) {
-    let filename: String = format!("{DATA_FOLDER}/{date}_event_data.csv");
+pub fn write_event_data(data_path: &str, devices: &HashMap<u32, Device>, events: &Vec<EventItemWithId>, date: &str) {
+    let filename: String = format!("{data_path}/{date}_event_data.csv");
 
     let mut measurement_types: Vec<String> = vec![];
     for event in events {
@@ -158,8 +156,8 @@ pub fn write_event_data(devices: &HashMap<u32, Device>, events: &Vec<EventItemWi
     write_records(&filename, records);
 }
 
-pub fn write_anomaly_data(devices: &HashMap<u32, Device>, anomalies: &[VoltageAnomaly], date: &str) {
-    let filename: String = format!("{DATA_FOLDER}/{date}_anomaly_data.csv");
+pub fn write_anomaly_data(data_path: &str, devices: &HashMap<u32, Device>, anomalies: &[VoltageAnomaly], date: &str) {
+    let filename: String = format!("{data_path}/{date}_anomaly_data.csv");
 
     let records: Vec<Vec<String>> = std::iter::once(VoltageAnomaly::to_header_record())
         .chain(

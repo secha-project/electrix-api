@@ -26,17 +26,22 @@ async fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        eprintln!("Usage: {} <date>", args[0]);
+        eprintln!("Usage: {} <date> [<target_path>]", args[0]);
         std::process::exit(1);
     }
     let date: String = args[1].clone();
+    let target_path: String = if args.len() > 2 {
+        args[2].clone()
+    } else {
+        "./data".to_string()
+    };
     let verbose: bool = get_env_or_default("VERBOSE", &false);
 
     let host: Host = utils::handlers::get_host();
 
     let devices: Vec<Device> = get_devices(&host).await;
     println!("Found {} devices", devices.len());
-    write_devices(&devices, &date);
+    write_devices(&target_path, &devices, &date);
 
     let device_map: HashMap<u32, Device> = devices
         .clone()
@@ -115,9 +120,9 @@ async fn main() {
 
     }
 
-    write_device_data(&device_map, &device_data_collection, &date);
-    write_device_events(&device_event_collection, &date);
-    write_event_triggers(&event_triggers, &date);
-    write_event_data(&device_map, &event_data_collection, &date);
-    write_anomaly_data(&device_map, &anomaly_collection, &date);
+    write_device_data(&target_path, &device_map, &device_data_collection, &date);
+    write_device_events(&target_path, &device_event_collection, &date);
+    write_event_triggers(&target_path, &event_triggers, &date);
+    write_event_data(&target_path, &device_map, &event_data_collection, &date);
+    write_anomaly_data(&target_path, &device_map, &anomaly_collection, &date);
 }
