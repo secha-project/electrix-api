@@ -92,8 +92,8 @@ impl DeviceEventItemWithId {
             .map(|data_map| {
                 [
                     self.settings.meter.to_string(),
-                    data_map.get("event_id").unwrap().to_string(),
-                    data_map.get("timestamp").unwrap().to_string(),
+                    data_map.get("event_id").unwrap().clone(),
+                    data_map.get("timestamp").unwrap().clone(),
                 ]
                     .iter()
                     .cloned()

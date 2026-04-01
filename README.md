@@ -3,7 +3,7 @@
 The current functionality of the application is to fetch data from the MX Electric API and store the data in CSV files.
 Currently, the application fetches one full day of data for a specific date for all available devices.
 
-The application has been tested with Rust version 1.86.0 on Ubuntu environment.
+The application has been tested with Rust version 1.94.1 on Ubuntu environment.
 
 Contents:
 
@@ -16,7 +16,7 @@ The static checks can be run either locally or in a Docker container.
 
 ### Running static checks locally
 
-Requires Rust installation with the `cargo deny` tool.
+Requires Rust installation with the `cargo deny` tool, tested with version 0.18.3.
 
 On Ubuntu, these can be installed with the following commands:
 
