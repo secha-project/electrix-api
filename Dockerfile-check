@@ -1,11 +1,11 @@
-FROM ubuntu@sha256:c17e4720a74c1343e53c68e832fbf425d0c75751f4ccc25f0452c865c15aa288
+FROM ubuntu@sha256:53958ec7b67c2c9355df922dd08dbf0360611f8c3cdb656875e81873db9ffdba
 
 ENV LANG=C.UTF-8
 
 # Install the latest stable version of Rust and cargo with the deny tool
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y curl gcc libssl-dev openssl pkg-config && \
+    apt-get install -y curl gcc git libssl-dev openssl pkg-config && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     /root/.cargo/bin/cargo install --locked cargo-deny && \
     apt-get clean

@@ -1,4 +1,4 @@
-FROM ubuntu@sha256:c17e4720a74c1343e53c68e832fbf425d0c75751f4ccc25f0452c865c15aa288 AS builder
+FROM ubuntu@sha256:53958ec7b67c2c9355df922dd08dbf0360611f8c3cdb656875e81873db9ffdba AS builder
 
 WORKDIR /app
 ENV LANG=C.UTF-8
@@ -18,7 +18,7 @@ COPY . .
 RUN cargo build --release
 
 
-FROM ubuntu@sha256:c17e4720a74c1343e53c68e832fbf425d0c75751f4ccc25f0452c865c15aa288 AS runner
+FROM ubuntu@sha256:53958ec7b67c2c9355df922dd08dbf0360611f8c3cdb656875e81873db9ffdba AS runner
 
 ENV LANG=C.UTF-8
 
